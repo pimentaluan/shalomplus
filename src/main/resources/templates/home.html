@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Home - Shalom+</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f0f8ff;
+        color: #333;
+      }
+
+      header {
+        background-color: #00ced1;
+        color: white;
+        padding: 20px;
+        text-align: center;
+        font-size: 1.5em;
+        font-weight: bold;
+      }
+
+      nav {
+        margin-top: 10px;
+      }
+
+      nav span {
+        font-weight: bold;
+      }
+
+      nav a {
+        color: white;
+        text-decoration: none;
+        margin-left: 15px;
+      }
+
+      main {
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 20px;
+      }
+
+      .btn {
+        padding: 8px 15px;
+        font-size: 1em;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none;
+        color: white;
+        background-color: #00ced1;
+        transition: background-color 0.3s;
+      }
+
+      .btn:hover {
+        background-color: #00a5a5;
+      }
+
+      .btn.new {
+        margin-top: 40px;
+      }
+
+      .card {
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 15px 20px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-top: 40px;
+      }
+
+      .card-info p {
+        margin: 5px 0;
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      footer {
+        text-align: center;
+        padding: 15px;
+        margin-top: 30px;
+        border-top: 1px solid #00ced1;
+      }
+
+      h2 {
+        margin-bottom: 20px;
+      }
+
+      .sair:hover {
+        color: #00a5a5;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      Bem-vindo(a) ao Shalom+
+      <nav>
+        <span
+          th:text="'Olá, ' + ${usuario.nome} + ' (' + ${tipoUsuario} + ')'"
+        ></span>
+        |
+        <a th:href="@{/auth/logout}" class="sair">Sair</a>
+      </nav>
+    </header>
+
+    <main>
+      <h2>Meus Atendimentos</h2>
+
+      <!-- Botão para criar novo atendimento, visível apenas para o secretário -->
+      <div th:if="${tipoUsuario == 'SECRETARIO'}">
+        <a th:href="@{/atendimento/novo}" class="btn new">Novo Atendimento</a>
+      </div>
+
+      <div th:each="atendimento : ${atendimentos}" class="card">
+        <div class="card-info">
+          <p th:if="${tipoUsuario != 'ALUNO'}">
+            <strong>Aluno:</strong>
+            <span th:text="${atendimento.aluno.nome}"></span>
+          </p>
+          <p>
+            <strong>Profissional:</strong>
+            <span th:text="${atendimento.profissional.nome}"></span>
+          </p>
+          <p>
+            <strong>Data/Hora:</strong>
+            <span
+              th:text="${#temporals.format(atendimento.dataHora, 'dd/MM/yyyy HH:mm')}"
+            ></span>
+          </p>
+          <p>
+            <strong>Tipo:</strong> <span th:text="${atendimento.tipo}"></span>
+          </p>
+          <p>
+            <strong>Realizado:</strong>
+            <span th:text="${atendimento.realizado} ? 'Sim' : 'Não'"></span>
+          </p>
+        </div>
+
+        <div class="actions">
+          <a
+            th:if="${tipoUsuario == 'PROFISSIONAL'}"
+            th:href="@{/atendimento/editar/{id}(id=${atendimento.id})}"
+            class="btn"
+            >Aba do Profissional</a
+          >
+          <a
+            th:if="${tipoUsuario == 'SECRETARIO'}"
+            th:href="@{/atendimento/detalhes/{id}(id=${atendimento.id})}"
+            class="btn"
+            >Ver Detalhes</a
+          >
+        </div>
+      </div>
+    </main>
+
+    <footer>Shalom+ &copy; 2025</footer>
+  </body>
+</html>

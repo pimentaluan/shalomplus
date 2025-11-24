@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Shalom+</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        header {
+            background-color: #00ced1;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 22px;
+        }
+        main {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: calc(100vh - 60px); /* Altura total menos header */
+            padding: 20px;
+        }
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            background-color: white;
+            padding: 30px 25px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+        }
+        h2 {
+            text-align: center;
+            color: #00b2b2;
+            margin-bottom: 25px;
+            font-size: 20px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #00ced1;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            background-color: #00ced1;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background-color: #00a5a5;
+        }
+        .error-message {
+            color: red;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        footer {
+            text-align: center;
+            padding: 12px 0;
+            border-top: 1px solid #00ced1;
+            font-size: 13px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Shalom+</h1>
+    </header>
+
+    <main>
+        <div class="login-container">
+            <h2>Login</h2>
+
+            <div th:if="${mensagem}" class="error-message" th:text="${mensagem}"></div>
+
+            <form th:action="@{/auth}" method="post">
+                <label for="login">Matrícula / CRP / CRM / CPF</label>
+                <input type="text" id="login" name="login" placeholder="Digite sua matrícula, CRP, CRM ou CPF" required>
+
+                <label for="senha">Senha</label>
+                <input type="password" id="senha" name="senha" placeholder="Digite sua senha" required>
+
+                <button type="submit">Entrar</button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        Shalom+ &copy; 2025
+    </footer>
+</body>
+</html>

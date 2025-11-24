@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Novo Atendimento - Shalom+</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f9fb;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        header {
+            background-color: #00ced1;
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        main {
+            padding: 30px;
+            display: flex;
+            justify-content: center;
+        }
+
+        form {
+            background-color: white;
+            padding: 25px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #00b2b2;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        button {
+            margin-top: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            margin-top: 30px;
+            border-top: 1px solid #00ced1;
+            background-color: #e0f7fa;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Cadastro de Novo Atendimento</h1>
+    <nav>
+        <a th:href="@{/home}">Voltar</a> |
+        <a th:href="@{/auth/logout}">Sair</a>
+    </nav>
+</header>
+
+<main>
+    <form th:action="@{/atendimento/novo}" method="post">
+        <label for="aluno">Aluno:</label>
+        <select id="aluno" name="alunoId" required>
+            <option value="" disabled selected>Selecione o aluno</option>
+            <option th:each="aluno : ${alunos}" 
+                    th:value="${aluno.id}" 
+                    th:text="${aluno.nome + ' - ' + aluno.turma}"></option>
+        </select>
+
+        <label for="profissional">Profissional:</label>
+        <select id="profissional" name="profissionalId" required>
+            <option value="" disabled selected>Selecione o profissional</option>
+            <option th:each="prof : ${profissionais}" 
+                    th:value="${prof.id}" 
+                    th:text="${prof.nome + ' - ' + prof.especialidade}"></option>
+        </select>
+
+        <label for="dataHora">Data e Hora:</label>
+        <input type="datetime-local" id="dataHora" name="dataHora" required>
+
+        <label for="tipo">Tipo de Atendimento:</label>
+        <select id="tipo" name="tipo" required>
+            <option value="" disabled selected>Selecione o tipo</option>
+            <option>Psicológico</option>
+            <option>Médico</option>
+        </select>
+
+        <button type="submit">Cadastrar Atendimento</button>
+    </form>
+</main>
+
+<footer>
+    <p>Shalom+ &copy; 2025</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalhes do Atendimento - Shalom+</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        header {
+            background-color: #00ced1;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            margin-top: 0;
+        }
+
+        .card p {
+            margin: 10px 0;
+            font-size: 1.1em;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            background-color: #00ced1;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #00a5a5;
+        }
+
+        .btn.cancel {
+            background-color: #e74c3c;
+        }
+
+        .btn.cancel:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        Detalhes do Atendimento
+    </header>
+
+    <main>
+        <div class="card">
+            <h2>Informações do Atendimento</h2>
+            <p><strong>Aluno:</strong> <span th:text="${atendimento.aluno.nome}"></span></p>
+            <p><strong>Profissional:</strong> <span th:text="${atendimento.profissional.nome}"></span></p>
+            <p><strong>Data/Hora:</strong> <span th:text="${#temporals.format(atendimento.dataHora, 'dd/MM/yyyy HH:mm')}"></span></p>
+            <p><strong>Tipo:</strong> <span th:text="${atendimento.tipo}"></span></p>
+            <p><strong>Observações:</strong> <span th:text="${atendimento.observacoes}"></span></p>
+            <p><strong>Realizado:</strong> <span th:text="${atendimento.realizado} ? 'Sim' : 'Não'"></span></p>
+        </div>
+
+        <div class="actions">
+            <a th:href="@{/atendimento/cancelar/{id}(id=${atendimento.id})}" class="btn cancel">Cancelar Atendimento</a>
+            <a th:href="@{/home}" class="btn">Voltar</a>
+        </div>
+    </main>
+</body>
+</html>
