@@ -1,6 +1,7 @@
 package br.ifpb.shalomplus.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.ifpb.shalomplus.model.Aluno;
 import br.ifpb.shalomplus.repository.AlunoRepository;
@@ -63,13 +65,20 @@ public class AlunoController {
         mv.addObject("aluno", alunoRepository.findById(id).orElse(new Aluno()));
         return mv;
     }
-
+    
     // Excluir aluno
     @GetMapping("/excluir/{id}")
-    public String excluir(@PathVariable Long id, HttpSession session) {
+    public String excluir(@PathVariable Long id, HttpSession session, RedirectAttributes ra) {
         if (!isAdmin(session)) return "redirect:/auth";
 
-        alunoRepository.deleteById(id);
+        try {
+            alunoRepository.deleteById(id);
+            ra.addFlashAttribute("msgSucesso", "Aluno excluído com sucesso.");
+        } catch (DataIntegrityViolationException e) {
+            ra.addFlashAttribute("msgErro",
+                "Não é possível excluir este aluno, pois ele possui atendimentos cadastrados.");
+        }
+
         return "redirect:/aluno/listar";
     }
 }

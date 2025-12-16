@@ -101,6 +101,34 @@
     </header>
 
     <main>
+      <div
+        th:if="${msgSucesso}"
+        style="
+          background: #dcfce7;
+          border: 1px solid #16a34a;
+          color: #166534;
+          padding: 10px;
+          border-radius: 6px;
+          margin-bottom: 12px;
+        "
+      >
+        <span th:text="${msgSucesso}"></span>
+      </div>
+
+      <div
+        th:if="${msgErro}"
+        style="
+          background: #fee2e2;
+          border: 1px solid #ef4444;
+          color: #991b1b;
+          padding: 10px;
+          border-radius: 6px;
+          margin-bottom: 12px;
+        "
+      >
+        <span th:text="${msgErro}"></span>
+      </div>
+
       <a th:href="@{/aluno/novo}" class="btn btn-create">Novo Aluno</a>
 
       <table>
@@ -123,7 +151,7 @@
                 >Editar</a
               >
               <a
-                th:href="@{'/aluno/deletar/' + ${aluno.id}}"
+                th:href="@{'/aluno/excluir/' + ${aluno.id}}"
                 class="btn"
                 onclick="return confirm('Deseja realmente excluir este aluno?');"
                 >Excluir</a

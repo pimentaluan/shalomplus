@@ -1,5 +1,7 @@
 package br.ifpb.shalomplus.controller;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -92,7 +94,7 @@ public class AtendimentoController {
             @RequestParam Long alunoId,
             @RequestParam Long profissionalId,
             @RequestParam String tipo,
-            @RequestParam String dataHora, // enviar como "yyyy-MM-dd'T'HH:mm"
+            @RequestParam String dataHora,
             HttpSession session) {
 
         Object usuario = session.getAttribute("usuario");
@@ -106,7 +108,14 @@ public class AtendimentoController {
         Profissional profissional = profissionalRepository.findById(profissionalId).orElse(null);
 
         if (aluno == null || profissional == null) {
-            return "redirect:/atendimento/novo";
+            return "redirect:/atendimento/novo?erro=dados_invalidos";
+        }
+
+        LocalDateTime dh = LocalDateTime.parse(dataHora);
+
+        boolean ocupado = atendimentoRepository.existsByProfissional_IdAndDataHoraAndCanceladoFalse(profissionalId, dh);
+        if (ocupado) {
+            return "redirect:/atendimento/novo?erro=indisponivel";
         }
 
         Atendimento atendimento = new Atendimento();
@@ -114,7 +123,8 @@ public class AtendimentoController {
         atendimento.setProfissional(profissional);
         atendimento.setTipo(tipo);
         atendimento.setRealizado(false);
-        atendimento.setDataHora(java.time.LocalDateTime.parse(dataHora));
+        atendimento.setCancelado(false); 
+        atendimento.setDataHora(dh);
 
         atendimentoRepository.save(atendimento);
         return "redirect:/home";
@@ -129,10 +139,14 @@ public class AtendimentoController {
         Object tipoUsuario = session.getAttribute("tipoUsuario");
 
         if (usuario == null || !"SECRETARIO".equals(tipoUsuario)) {
-            return "redirect:/auth";
+            return "redirect:/home";
         }
 
-        atendimentoRepository.deleteById(id);
+        atendimentoRepository.findById(id).ifPresent(atendimento -> {
+            atendimento.setCancelado(true);
+            atendimentoRepository.save(atendimento);
+        });
+
         return "redirect:/home";
     }
 

@@ -33,4 +33,5 @@ public class Atendimento {
     private String observacoes;
 
     private Boolean realizado = false;
+    private Boolean cancelado = false;
 }

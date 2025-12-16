@@ -21,29 +21,18 @@
         font-weight: bold;
       }
 
-      h2 {
-        color: white;
-      }
-
-      nav {
-        margin-top: 10px;
-      }
-
-      nav span {
-        font-weight: bold;
-      }
-
-      nav a {
-        color: white;
-        text-decoration: none;
-        margin-left: 15px;
-      }
+      nav { margin-top: 10px; }
+      nav span { font-weight: bold; }
+      nav a { color: white; text-decoration: none; margin-left: 15px; }
+      .sair:hover { color: #002244; }
 
       main {
         max-width: 900px;
         margin: 30px auto;
         padding: 20px;
       }
+
+      h2 { color: white; margin: 18px 0 10px; }
 
       .btn {
         padding: 8px 15px;
@@ -55,37 +44,36 @@
         color: white;
         background-color: #002244;
         transition: background-color 0.3s;
+        display: inline-block;
       }
-
-      .btn:hover {
-        background-color: #002250;
-      }
-
-      .btn.new {
-        margin-top: 40px;
-      }
+      .btn:hover { background-color: #002250; }
 
       .card {
         background-color: #ffffff;
         border-radius: 8px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         padding: 15px 20px;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
         display: flex;
         justify-content: space-between;
         align-items: center;
         flex-wrap: wrap;
-        margin-top: 40px;
       }
 
-      .card-info p {
-        margin: 5px 0;
-      }
+      .card-info p { margin: 5px 0; }
+      .actions { display: flex; gap: 10px; flex-wrap: wrap; }
 
-      .actions {
-        display: flex;
-        gap: 10px;
+      .badge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: bold;
+        color: white;
       }
+      .b-agendado { background: #1d4ed8; }
+      .b-realizado { background: #16a34a; }
+      .b-cancelado { background: #ef4444; }
 
       footer {
         text-align: center;
@@ -95,134 +83,125 @@
         color: #ffffffff;
       }
 
-      h2 {
-        margin-bottom: 20px;
-      }
-
-      .sair:hover {
-        color: #002244;
+      .admin-links {
+        margin: 20px 0;
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
       }
     </style>
   </head>
+
   <body>
     <header>
       Bem-vindo(a) ao Shalom+
       <nav>
-        <span
-          th:text="'Olá, ' + ${usuario.nome} + ' (' + ${tipoUsuario} + ')'"
-        ></span>
+        <span th:text="'Olá, ' + ${usuario.nome} + ' (' + ${tipoUsuario} + ')'"></span>
         |
         <a th:href="@{/auth/logout}" class="sair">Sair</a>
       </nav>
     </header>
 
     <main>
-      <div th:if="${tipoUsuario != 'ADMIN'}">
-        <h2>Meus Atendimentos</h2>
+      <!-- ADMIN -->
+      <div th:if="${tipoUsuario == 'ADMIN'}" class="admin-links">
+        <a th:href="@{/aluno/listar}" class="btn">Gerenciar Alunos</a>
+        <a th:href="@{/profissional/listar}" class="btn">Gerenciar Profissionais</a>
+        <a th:href="@{/secretario/listar}" class="btn">Gerenciar Secretários</a>
       </div>
 
-      <!-- Botão para criar novo atendimento, visível apenas para o secretário -->
+      <!-- SECRETARIO -->
       <div th:if="${tipoUsuario == 'SECRETARIO'}">
-        <a th:href="@{/atendimento/novo}" class="btn new">Novo Atendimento</a>
-      </div>
+        <a th:href="@{/atendimento/novo}" class="btn" style="margin-bottom: 14px;">Novo Atendimento</a>
 
-      <div
-        th:if="${tipoUsuario == 'ADMIN'}"
-        style="margin: 20px 0; display: flex; justify-content: center"
-      >
-        <a
-          th:href="@{/aluno/listar}"
-          class="btn"
-          style="
-            padding: 12px 20px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 8px;
-            background-color: #002244;
-            color: white;
-            text-decoration: none;
-            transition: background-color 0.3s;
-          "
-        >
-          Gerenciar Alunos
-        </a>
+        <h2>Todos os atendimentos</h2>
 
-        <a
-          th:href="@{/profissional/listar}"
-          class="btn"
-          style="
-            margin: 0 0 0 15px;
-            padding: 12px 20px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 8px;
-            background-color: #002244;
-            color: white;
-            text-decoration: none;
-            transition: background-color 0.3s;
-          "
-        >
-          Gerenciar Profissionais
-        </a>
-
-        <a
-          th:href="@{/secretario/listar}"
-          class="btn"
-          style="
-            margin: 0 0 0 15px;
-            padding: 12px 20px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 8px;
-            background-color: #002244;
-            color: white;
-            text-decoration: none;
-            transition: background-color 0.3s;
-          "
-        >
-          Gerenciar Secretários
-        </a>
-        
-      </div>
-
-      <div th:each="atendimento : ${atendimentos}" class="card">
-        <div class="card-info">
-          <p th:if="${tipoUsuario != 'ALUNO'}">
-            <strong>Aluno:</strong>
-            <span th:text="${atendimento.aluno.nome}"></span>
-          </p>
-          <p>
-            <strong>Profissional:</strong>
-            <span th:text="${atendimento.profissional.nome}"></span>
-          </p>
-          <p>
-            <strong>Data/Hora:</strong>
-            <span
-              th:text="${#temporals.format(atendimento.dataHora, 'dd/MM/yyyy HH:mm')}"
-            ></span>
-          </p>
-          <p>
-            <strong>Tipo:</strong> <span th:text="${atendimento.tipo}"></span>
-          </p>
-          <p>
-            <strong>Realizado:</strong>
-            <span th:text="${atendimento.realizado} ? 'Sim' : 'Não'"></span>
-          </p>
+        <div th:if="${#lists.isEmpty(atendimentos)}" style="color:white;">
+          Nenhum atendimento cadastrado.
         </div>
 
-        <div class="actions">
-          <a
-            th:if="${tipoUsuario == 'PROFISSIONAL'}"
-            th:href="@{/atendimento/editar/{id}(id=${atendimento.id})}"
-            class="btn"
-            >Aba do Profissional</a
-          >
-          <a
-            th:if="${tipoUsuario == 'SECRETARIO'}"
-            th:href="@{/atendimento/detalhes/{id}(id=${atendimento.id})}"
-            class="btn"
-            >Ver Detalhes</a
-          >
+        <div th:each="a : ${atendimentos}" class="card">
+          <div class="card-info">
+            <p><strong>Aluno:</strong> <span th:text="${a.aluno.nome}"></span></p>
+            <p><strong>Profissional:</strong> <span th:text="${a.profissional.nome}"></span></p>
+            <p><strong>Data/Hora:</strong>
+              <span th:text="${#temporals.format(a.dataHora, 'dd/MM/yyyy HH:mm')}"></span>
+            </p>
+            <p><strong>Tipo:</strong> <span th:text="${a.tipo}"></span></p>
+            <p>
+              <strong>Status:</strong>
+              <span class="badge b-cancelado" th:if="${a.cancelado}">CANCELADO</span>
+              <span class="badge b-realizado" th:if="${a.cancelado != true and a.realizado == true}">REALIZADO</span>
+              <span class="badge b-agendado" th:if="${a.cancelado != true and a.realizado != true}">AGENDADO</span>
+            </p>
+          </div>
+
+          <div class="actions">
+            <a th:href="@{/atendimento/detalhes/{id}(id=${a.id})}" class="btn">Ver Detalhes</a>
+            <a th:if="${a.cancelado != true}" th:href="@{/atendimento/cancelar/{id}(id=${a.id})}"
+               class="btn"
+               onclick="return confirm('Cancelar este atendimento?');">Cancelar</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ALUNO / PROFISSIONAL -->
+      <div th:if="${tipoUsuario == 'ALUNO' or tipoUsuario == 'PROFISSIONAL'}">
+        <h2>Próximos atendimentos</h2>
+
+        <div th:if="${#lists.isEmpty(proximosAtendimentos)}" style="color:white;">
+          Nenhum próximo atendimento.
+        </div>
+
+        <div th:each="a : ${proximosAtendimentos}" class="card">
+          <div class="card-info">
+            <p th:if="${tipoUsuario != 'ALUNO'}"><strong>Aluno:</strong> <span th:text="${a.aluno.nome}"></span></p>
+            <p><strong>Profissional:</strong> <span th:text="${a.profissional.nome}"></span></p>
+            <p><strong>Data/Hora:</strong>
+              <span th:text="${#temporals.format(a.dataHora, 'dd/MM/yyyy HH:mm')}"></span>
+            </p>
+            <p><strong>Tipo:</strong> <span th:text="${a.tipo}"></span></p>
+            <p>
+              <strong>Status:</strong>
+              <span class="badge b-realizado" th:if="${a.realizado == true}">REALIZADO</span>
+              <span class="badge b-agendado" th:if="${a.realizado != true}">AGENDADO</span>
+            </p>
+          </div>
+
+          <div class="actions">
+            <a th:if="${tipoUsuario == 'PROFISSIONAL'}"
+               th:href="@{/atendimento/editar/{id}(id=${a.id})}"
+               class="btn">Aba do Profissional</a>
+          </div>
+        </div>
+
+        <h2>Atendimentos antigos</h2>
+
+        <div th:if="${#lists.isEmpty(atendimentosAntigos)}" style="color:white;">
+          Nenhum atendimento antigo.
+        </div>
+
+        <div th:each="a : ${atendimentosAntigos}" class="card">
+          <div class="card-info">
+            <p th:if="${tipoUsuario != 'ALUNO'}"><strong>Aluno:</strong> <span th:text="${a.aluno.nome}"></span></p>
+            <p><strong>Profissional:</strong> <span th:text="${a.profissional.nome}"></span></p>
+            <p><strong>Data/Hora:</strong>
+              <span th:text="${#temporals.format(a.dataHora, 'dd/MM/yyyy HH:mm')}"></span>
+            </p>
+            <p><strong>Tipo:</strong> <span th:text="${a.tipo}"></span></p>
+            <p>
+              <strong>Status:</strong>
+
+              <span class="badge b-cancelado" th:if="${a.cancelado == true}">CANCELADO</span>
+
+              <span class="badge b-realizado"
+                    th:if="${a.cancelado != true and a.realizado == true}">REALIZADO</span>
+
+              <span class="badge b-agendado"
+                    th:if="${a.cancelado != true and a.realizado != true}">AGENDADO</span>
+            </p>
+          </div>
         </div>
       </div>
     </main>

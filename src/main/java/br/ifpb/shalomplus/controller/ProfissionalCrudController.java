@@ -1,10 +1,12 @@
 package br.ifpb.shalomplus.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.ifpb.shalomplus.model.Profissional;
 import br.ifpb.shalomplus.repository.ProfissionalRepository;
@@ -24,7 +26,8 @@ public class ProfissionalCrudController {
     // Listar profissionais
     @GetMapping("/listar")
     public ModelAndView listar(HttpSession session) {
-        if (!isAdmin(session)) return new ModelAndView("redirect:/auth");
+        if (!isAdmin(session))
+            return new ModelAndView("redirect:/auth");
 
         ModelAndView mv = new ModelAndView("profissional/listar"); // profissional/listar.html
         mv.addObject("profissionais", profissionalRepository.findAll());
@@ -34,7 +37,8 @@ public class ProfissionalCrudController {
     // Form novo profissional
     @GetMapping("/novo")
     public ModelAndView novo(HttpSession session) {
-        if (!isAdmin(session)) return new ModelAndView("redirect:/auth");
+        if (!isAdmin(session))
+            return new ModelAndView("redirect:/auth");
 
         ModelAndView mv = new ModelAndView("profissional/form"); // profissional/form.html
         mv.addObject("profissional", new Profissional());
@@ -44,7 +48,8 @@ public class ProfissionalCrudController {
     // Salvar (novo ou editar)
     @PostMapping("/salvar")
     public String salvar(@ModelAttribute Profissional profissional, HttpSession session) {
-        if (!isAdmin(session)) return "redirect:/auth";
+        if (!isAdmin(session))
+            return "redirect:/auth";
 
         profissionalRepository.save(profissional);
         return "redirect:/profissional/listar";
@@ -53,7 +58,8 @@ public class ProfissionalCrudController {
     // Editar
     @GetMapping("/editar/{id}")
     public ModelAndView editar(@PathVariable Long id, HttpSession session) {
-        if (!isAdmin(session)) return new ModelAndView("redirect:/auth");
+        if (!isAdmin(session))
+            return new ModelAndView("redirect:/auth");
 
         ModelAndView mv = new ModelAndView("profissional/form");
         mv.addObject("profissional", profissionalRepository.findById(id).orElse(new Profissional()));
@@ -62,10 +68,22 @@ public class ProfissionalCrudController {
 
     // Excluir
     @GetMapping("/excluir/{id}")
-    public String excluir(@PathVariable Long id, HttpSession session) {
-        if (!isAdmin(session)) return "redirect:/auth";
+    public String excluir(@PathVariable Long id,
+            HttpSession session,
+            RedirectAttributes ra) {
 
-        profissionalRepository.deleteById(id);
+        if (!isAdmin(session))
+            return "redirect:/auth";
+
+        try {
+            profissionalRepository.deleteById(id);
+            ra.addFlashAttribute("msgSucesso", "Profissional excluído com sucesso.");
+        } catch (DataIntegrityViolationException e) {
+            ra.addFlashAttribute(
+                    "msgErro",
+                    "Não é possível excluir este profissional, pois ele possui atendimentos cadastrados.");
+        }
+
         return "redirect:/profissional/listar";
     }
 }

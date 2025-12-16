@@ -1,5 +1,7 @@
 package br.ifpb.shalomplus.controller;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,8 +9,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import br.ifpb.shalomplus.model.Aluno;
 import br.ifpb.shalomplus.model.Profissional;
-import jakarta.servlet.http.HttpSession;
 import br.ifpb.shalomplus.repository.AtendimentoRepository;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class HomeController {
@@ -21,7 +23,6 @@ public class HomeController {
         Object usuario = session.getAttribute("usuario");
         Object tipoUsuario = session.getAttribute("tipoUsuario");
 
-        // Redireciona para login se não houver usuário
         if (usuario == null) {
             model.setViewName("redirect:/auth");
             return model;
@@ -30,18 +31,34 @@ public class HomeController {
         model.addObject("usuario", usuario);
         model.addObject("tipoUsuario", tipoUsuario);
 
-        // Adiciona a lista de atendimentos conforme o tipo de usuário
+        LocalDateTime agora = LocalDateTime.now();
+
         if ("ALUNO".equals(tipoUsuario)) {
             Aluno aluno = (Aluno) usuario;
-            model.addObject("atendimentos", atendimentoRepository.findByAluno_Id(aluno.getId()));
-        } else if ("PROFISSIONAL".equals(tipoUsuario)) {
-            Profissional prof = (Profissional) usuario;
-            model.addObject("atendimentos", atendimentoRepository.findByProfissional_Id(prof.getId()));
-        } else if ("SECRETARIO".equals(tipoUsuario)) {
-            model.addObject("atendimentos", atendimentoRepository.findAll());
+
+            model.addObject("proximosAtendimentos",
+                atendimentoRepository.findByAluno_IdAndCanceladoFalseAndDataHoraGreaterThanEqualOrderByDataHoraAsc(aluno.getId(), agora));
+
+            model.addObject("atendimentosAntigos",
+                atendimentoRepository.findByAluno_IdAndDataHoraLessThanOrderByDataHoraDesc(aluno.getId(), agora));
         }
 
-        model.setViewName("home"); // Nome do template Thymeleaf home.html
+        else if ("PROFISSIONAL".equals(tipoUsuario)) {
+            Profissional prof = (Profissional) usuario;
+
+            model.addObject("proximosAtendimentos",
+                atendimentoRepository.findByProfissional_IdAndCanceladoFalseAndDataHoraGreaterThanEqualOrderByDataHoraAsc(prof.getId(), agora));
+
+            model.addObject("atendimentosAntigos",
+                atendimentoRepository.findByProfissional_IdAndDataHoraLessThanOrderByDataHoraDesc(prof.getId(), agora));
+        }
+
+        else if ("SECRETARIO".equals(tipoUsuario)) {
+            model.addObject("atendimentos",
+                atendimentoRepository.findAllByOrderByDataHoraDesc());
+        }
+
+        model.setViewName("home");
         return model;
     }
 }

@@ -101,7 +101,37 @@
     </header>
 
     <main>
-      <a th:href="@{/profissional/novo}" class="btn btn-create">Novo Profissional</a>
+      <div
+        th:if="${msgSucesso}"
+        style="
+          background: #dcfce7;
+          border: 1px solid #16a34a;
+          color: #166534;
+          padding: 10px;
+          border-radius: 6px;
+          margin-bottom: 12px;
+        "
+      >
+        <span th:text="${msgSucesso}"></span>
+      </div>
+
+      <div
+        th:if="${msgErro}"
+        style="
+          background: #fee2e2;
+          border: 1px solid #ef4444;
+          color: #991b1b;
+          padding: 10px;
+          border-radius: 6px;
+          margin-bottom: 12px;
+        "
+      >
+        <span th:text="${msgErro}"></span>
+      </div>
+
+      <a th:href="@{/profissional/novo}" class="btn btn-create"
+        >Novo Profissional</a
+      >
 
       <table>
         <thead>
@@ -119,12 +149,17 @@
             <td th:text="${profissional.especialidade}"></td>
 
             <td>
-              <a th:href="@{'/profissional/editar/' + ${profissional.id}}" class="btn">Editar</a>
+              <a
+                th:href="@{'/profissional/editar/' + ${profissional.id}}"
+                class="btn"
+                >Editar</a
+              >
               <a
                 th:href="@{'/profissional/excluir/' + ${profissional.id}}"
                 class="btn"
                 onclick="return confirm('Deseja realmente excluir este profissional?');"
-              >Excluir</a>
+                >Excluir</a
+              >
             </td>
           </tr>
         </tbody>
