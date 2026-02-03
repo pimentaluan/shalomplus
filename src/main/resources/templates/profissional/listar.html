@@ -1,173 +1,289 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Lista de Profissionais - Shalom+</title>
-    <style>
-      body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #f0f8ff;
-        margin: 0;
-        padding: 0;
-        color: #333;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-      }
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>Profissionais — Shalom+</title>
 
-      header {
-        background-color: #003366;
-        color: white;
-        padding: 15px 25px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
+  <style>
+    :root{
+      --bg-0:#0b1020;
+      --bg-1:#0f1b3a;
+      --text:#eaf0ff;
+      --muted:rgba(234,240,255,.7);
+      --card:rgba(255,255,255,.08);
+      --brand:#4f46e5;
+      --brand-2:#06b6d4;
+      --danger:#ef4444;
+      --shadow:0 18px 50px rgba(0,0,0,.45);
+      --radius:16px;
+    }
 
-      header h1 {
-        margin: 0;
-        font-size: 22px;
-      }
-      nav a {
-        color: white;
-        text-decoration: none;
-        font-weight: bold;
-        margin-left: 15px;
-      }
-      nav a:hover {
-        text-decoration: underline;
-      }
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
 
-      main {
-        flex: 1;
-        padding: 30px;
-      }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 15% 10%, rgba(79,70,229,.35), transparent 60%),
+        radial-gradient(900px 500px at 85% 25%, rgba(6,182,212,.25), transparent 55%),
+        linear-gradient(180deg, var(--bg-0), var(--bg-1));
+      display:flex;
+      flex-direction:column;
+      min-height:100vh;
+    }
 
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-      }
+    header{
+      position:sticky;
+      top:0;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(11,16,32,.78), rgba(11,16,32,.35));
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
 
-      th,
-      td {
-        padding: 10px;
-        text-align: left;
-        border: 1px solid #003366;
-      }
+    .topbar{
+      max-width:1100px;
+      margin:0 auto;
+      padding:14px 18px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
 
-      th {
-        background-color: #003366;
-        color: white;
-      }
+    .brand{
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
 
-      .btn {
-        background-color: #003366;
-        color: white;
-        border: none;
-        padding: 8px 12px;
-        cursor: pointer;
-        border-radius: 5px;
-        text-decoration: none;
-        font-size: 14px;
-      }
+    .brand-logo-wrapper{
+      width:46px;
+      height:46px;
+      border-radius:14px;
+      overflow:hidden;
+      background: rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.18);
+    }
 
-      .btn:hover {
-        background-color: #002244;
-      }
+    .brand-logo{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
 
-      .btn-create {
-        margin-bottom: 15px;
-        display: inline-block;
-      }
+    .brand-title strong{ font-size:14px; }
+    .brand-title small{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+    }
 
-      footer {
-        text-align: center;
-        padding: 15px;
-        background-color: #e0f7fa;
-        color: #003366;
-        border-top: 1px solid #00b2b2;
-        margin-top: auto;
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <h1>Gerenciamento de Profissionais</h1>
-      <nav>
-        <a th:href="@{/home}">Home</a> |
-        <a th:href="@{/auth/logout}">Sair</a>
-      </nav>
-    </header>
+    .nav{ display:flex; gap:10px; }
 
-    <main>
-      <div
-        th:if="${msgSucesso}"
-        style="
-          background: #dcfce7;
-          border: 1px solid #16a34a;
-          color: #166534;
-          padding: 10px;
-          border-radius: 6px;
-          margin-bottom: 12px;
-        "
-      >
-        <span th:text="${msgSucesso}"></span>
+    .link{
+      text-decoration:none;
+      color:var(--text);
+      font-weight:800;
+      font-size:13px;
+      padding:9px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+    }
+
+    .link-danger{
+      border-color: rgba(239,68,68,.28);
+      background: rgba(239,68,68,.10);
+    }
+
+    main{
+      flex:1;
+      max-width:1100px;
+      margin:24px auto;
+      padding:0 18px;
+      width:100%;
+    }
+
+    .card{
+      background: linear-gradient(180deg, var(--card), rgba(255,255,255,.06));
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px;
+    }
+
+    .card-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-bottom:12px;
+    }
+
+    h2{ margin:0; }
+
+    .alert{
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:13px;
+      margin-bottom:12px;
+    }
+
+    .alert-success{
+      background: rgba(34,197,94,.15);
+      border:1px solid rgba(34,197,94,.35);
+      color:#bbf7d0;
+    }
+
+    .alert-error{
+      background: rgba(239,68,68,.15);
+      border:1px solid rgba(239,68,68,.35);
+      color:#fecaca;
+    }
+
+    .btn{
+      padding:10px 14px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      font-weight:900;
+      font-size:13px;
+      cursor:pointer;
+      text-decoration:none;
+      min-width:110px;
+      text-align:center;
+    }
+
+    .btn-primary{
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      color:#0b1020;
+      border:none;
+    }
+
+    .btn-danger{
+      background: rgba(239,68,68,.15);
+      border-color: rgba(239,68,68,.35);
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:10px;
+      font-size:14px;
+    }
+
+    th, td{
+      padding:12px;
+      text-align:left;
+      border-bottom:1px solid rgba(255,255,255,.1);
+    }
+
+    th{
+      font-size:12px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.04em;
+    }
+
+    tbody tr:hover{
+      background: rgba(255,255,255,.04);
+    }
+
+    .actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    footer{
+      text-align:center;
+      padding:16px;
+      font-size:12px;
+      color:rgba(234,240,255,.55);
+      border-top:1px solid rgba(255,255,255,.06);
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-logo-wrapper">
+        <img th:src="@{/img/logo.png}" class="brand-logo" alt="Shalom+" />
       </div>
-
-      <div
-        th:if="${msgErro}"
-        style="
-          background: #fee2e2;
-          border: 1px solid #ef4444;
-          color: #991b1b;
-          padding: 10px;
-          border-radius: 6px;
-          margin-bottom: 12px;
-        "
-      >
-        <span th:text="${msgErro}"></span>
+      <div class="brand-title">
+        <strong>Shalom+</strong>
+        <small>Gerenciamento de profissionais</small>
       </div>
+    </div>
 
-      <a th:href="@{/profissional/novo}" class="btn btn-create"
-        >Novo Profissional</a
-      >
+    <nav class="nav">
+      <a th:href="@{/home}" class="link">Home</a>
+      <a th:href="@{/auth/logout}" class="link link-danger">Sair</a>
+    </nav>
+  </div>
+</header>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>CR</th>
-            <th>Especialidade</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr th:each="profissional : ${profissionais}">
-            <td th:text="${profissional.nome}"></td>
-            <td th:text="${profissional.cr}"></td>
-            <td th:text="${profissional.especialidade}"></td>
+<main>
 
-            <td>
-              <a
-                th:href="@{'/profissional/editar/' + ${profissional.id}}"
-                class="btn"
-                >Editar</a
-              >
+  <div th:if="${msgSucesso}" class="alert alert-success">
+    <span th:text="${msgSucesso}"></span>
+  </div>
+
+  <div th:if="${msgErro}" class="alert alert-error">
+    <span th:text="${msgErro}"></span>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Profissionais cadastrados</h2>
+      <a th:href="@{/profissional/novo}" class="btn btn-primary">
+        Novo profissional
+      </a>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>CR</th>
+          <th>Especialidade</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="profissional : ${profissionais}">
+          <td th:text="${profissional.nome}"></td>
+          <td th:text="${profissional.cr}"></td>
+          <td th:text="${profissional.especialidade}"></td>
+          <td>
+            <div class="actions">
+              <a th:href="@{'/profissional/editar/' + ${profissional.id}}" class="btn">
+                Editar
+              </a>
               <a
                 th:href="@{'/profissional/excluir/' + ${profissional.id}}"
-                class="btn"
-                onclick="return confirm('Deseja realmente excluir este profissional?');"
-                >Excluir</a
-              >
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </main>
+                class="btn btn-danger"
+                onclick="return confirm('Deseja realmente excluir este profissional?');">
+                Excluir
+              </a>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-    <footer>
-      <p>Shalom+ &copy; 2025</p>
-    </footer>
-  </body>
+</main>
+
+<footer>
+  Shalom+ &copy; 2025 • IFPB
+</footer>
+
+</body>
 </html>
