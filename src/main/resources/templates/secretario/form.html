@@ -1,160 +1,271 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Cadastro/Editar Secretário - Shalom+</title>
-    <style>
-      body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #f0f8ff;
-        margin: 0;
-        padding: 0;
-        color: #333;
-      }
-      header {
-        background-color: #003366;
-        color: white;
-        padding: 20px 30px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      header h1 {
-        margin: 0;
-        font-size: 24px;
-      }
-      nav a {
-        color: white;
-        text-decoration: none;
-        font-weight: bold;
-        margin-left: 10px;
-      }
-      main {
-        padding: 30px;
-        display: flex;
-        justify-content: center;
-      }
-      form {
-        background-color: white;
-        padding: 25px 30px;
-        border-radius: 8px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        width: 100%;
-        max-width: 500px;
-      }
-      label {
-        display: block;
-        margin-top: 15px;
-        font-weight: bold;
-      }
-      input {
-        width: 100%;
-        padding: 10px;
-        margin-top: 5px;
-        border: 1px solid #00b2b2;
-        border-radius: 5px;
-        box-sizing: border-box;
-        font-size: 14px;
-      }
-      button {
-        margin-top: 20px;
-        background-color: #003366;
-        color: white;
-        border: none;
-        padding: 12px 20px;
-        cursor: pointer;
-        font-weight: bold;
-        border-radius: 6px;
-        transition: all 0.3s ease;
-      }
-      button:hover {
-        background-color: #002244;
-      }
-      .back-link {
-        display: inline-block;
-        margin-top: 15px;
-        color: #003366;
-        font-weight: bold;
-        text-decoration: none;
-        font-size: 14px;
-      }
-      .back-link:hover {
-        text-decoration: underline;
-      }
-      footer {
-        text-align: center;
-        padding: 15px;
-        margin-top: 30px;
-        border-top: 1px solid #082a4dff;
-        background-color: #e0f7fa;
-        color: #003366;
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <h1 th:text="${secretario.id != null} ? 'Editar Secretário' : 'Novo Secretário'">
-        Novo Secretário
-      </h1>
-      <nav>
-        <a th:href="@{/secretario/listar}">Voltar</a> |
-        <a th:href="@{/auth/logout}">Sair</a>
-      </nav>
-    </header>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <main>
+  <title th:text="${secretario.id != null} ? 'Editar Secretário — Shalom+' : 'Novo Secretário — Shalom+'">
+    Novo Secretário — Shalom+
+  </title>
+
+  <style>
+    :root{
+      --bg-0:#0b1020;
+      --bg-1:#0f1b3a;
+      --text:#eaf0ff;
+      --muted:rgba(234,240,255,.72);
+      --card:rgba(255,255,255,.08);
+      --brand:#4f46e5;
+      --brand-2:#06b6d4;
+      --shadow: 0 18px 50px rgba(0,0,0,.45);
+      --radius:16px;
+      --input: rgba(255,255,255,.06);
+      --input-focus: rgba(79,70,229,.16);
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 15% 10%, rgba(79,70,229,.35), transparent 60%),
+        radial-gradient(900px 500px at 85% 25%, rgba(6,182,212,.25), transparent 55%),
+        linear-gradient(180deg, var(--bg-0), var(--bg-1));
+      display:flex;
+      flex-direction:column;
+      min-height:100vh;
+    }
+
+    header{
+      position:sticky;
+      top:0;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(11,16,32,.78), rgba(11,16,32,.35));
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+
+    .topbar{
+      max-width:1100px;
+      margin:0 auto;
+      padding:14px 18px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+
+    .brand{
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+
+    .brand-logo-wrapper{
+      width:46px;
+      height:46px;
+      border-radius:14px;
+      overflow:hidden;
+      background: rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.18);
+    }
+
+    .brand-logo{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+
+    .brand-title strong{ font-size:14px; }
+    .brand-title small{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .nav{ display:flex; gap:10px; }
+
+    .link{
+      text-decoration:none;
+      color:var(--text);
+      font-weight:800;
+      font-size:13px;
+      padding:9px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+    }
+
+    .link-danger{
+      border-color: rgba(239,68,68,.28);
+      background: rgba(239,68,68,.10);
+    }
+
+    main{
+      flex:1;
+      max-width:1100px;
+      margin:24px auto;
+      padding:0 18px;
+      display:flex;
+      justify-content:center;
+    }
+
+    .wrap{
+      width:100%;
+      max-width:600px;
+      display:grid;
+      gap:14px;
+    }
+
+    .card{
+      background: linear-gradient(180deg, var(--card), rgba(255,255,255,.06));
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:18px;
+    }
+
+    h2{ margin:0 0 6px; }
+    .sub{
+      margin:0 0 14px;
+      font-size:13px;
+      color:var(--muted);
+    }
+
+    form{ display:grid; gap:12px; }
+
+    label{
+      font-weight:800;
+      font-size:12.5px;
+    }
+
+    .input{
+      background:var(--input);
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:14px;
+      padding:11px 12px;
+    }
+
+    .input:focus-within{
+      border-color: rgba(79,70,229,.7);
+      box-shadow: 0 0 0 4px var(--input-focus);
+    }
+
+    input{
+      width:100%;
+      background:transparent;
+      border:0;
+      outline:0;
+      color:var(--text);
+      font-size:14px;
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      justify-content:flex-end;
+      margin-top:6px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      padding:11px 14px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      font-weight:900;
+      font-size:13px;
+      cursor:pointer;
+      text-decoration:none;
+      min-width:160px;
+      text-align:center;
+    }
+
+    .btn-primary{
+      color:#0b1020;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      border:none;
+    }
+
+    footer{
+      text-align:center;
+      padding:16px;
+      font-size:12px;
+      color:rgba(234,240,255,.55);
+      border-top:1px solid rgba(255,255,255,.06);
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-logo-wrapper">
+        <img th:src="@{/img/logo.png}" class="brand-logo" alt="Shalom+" />
+      </div>
+      <div class="brand-title">
+        <strong>Shalom+</strong>
+        <small th:text="${secretario.id != null} ? 'Editar secretário' : 'Novo secretário'"></small>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <a th:href="@{/secretario/listar}" class="link">Voltar</a>
+      <a th:href="@{/auth/logout}" class="link link-danger">Sair</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="card">
+      <h2 th:text="${secretario.id != null} ? 'Editar secretário' : 'Cadastrar secretário'"></h2>
+      <p class="sub">Informe os dados do secretário para salvar no sistema.</p>
+
       <form th:action="@{/secretario/salvar}" method="post">
         <input type="hidden" name="id" th:value="${secretario.id}" />
 
-        <label for="nome">Nome:</label>
-        <input
-          type="text"
-          id="nome"
-          name="nome"
-          th:value="${secretario.nome}"
-          required
-        />
+        <label>Nome</label>
+        <div class="input">
+          <input type="text" name="nome" th:value="${secretario.nome}" required />
+        </div>
 
-        <label for="cpf">CPF:</label>
-        <input
-          type="text"
-          id="cpf"
-          name="cpf"
-          th:value="${secretario.cpf}"
-          required
-        />
+        <label>CPF</label>
+        <div class="input">
+          <input type="text" name="cpf" th:value="${secretario.cpf}" required />
+        </div>
 
-        <label for="email">E-mail:</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          th:value="${secretario.email}"
-          required
-        />
+        <label>E-mail</label>
+        <div class="input">
+          <input type="email" name="email" th:value="${secretario.email}" required />
+        </div>
 
-        <label for="senha">Senha:</label>
-        <input
-          type="password"
-          id="senha"
-          name="senha"
-          th:value="${secretario.senha}"
-          required
-        />
+        <label>Senha</label>
+        <div class="input">
+          <input type="password" name="senha" th:value="${secretario.senha}" required />
+        </div>
 
-        <button
-          type="submit"
-          th:text="${secretario.id != null} ? 'Atualizar' : 'Cadastrar'"
-        >
-          Cadastrar
-        </button>
-
-        <a th:href="@{/secretario/listar}" class="back-link">Voltar para lista</a>
+        <div class="actions">
+          <a th:href="@{/secretario/listar}" class="btn">Cancelar</a>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            th:text="${secretario.id != null} ? 'Atualizar' : 'Cadastrar'">
+            Cadastrar
+          </button>
+        </div>
       </form>
-    </main>
+    </div>
+  </div>
+</main>
 
-    <footer>
-      <p>Shalom+ &copy; 2025</p>
-    </footer>
-  </body>
+<footer>
+  Shalom+ &copy; 2025 • IFPB
+</footer>
+
+</body>
 </html>
